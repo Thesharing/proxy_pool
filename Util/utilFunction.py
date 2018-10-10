@@ -18,6 +18,7 @@ from lxml import etree
 from Util.LogHandler import LogHandler
 from Util.WebRequest import WebRequest
 
+
 # logger = LogHandler(__name__, stream=False)
 
 
@@ -97,9 +98,12 @@ def validUsefulProxy(proxy):
     if isinstance(proxy, bytes):
         proxy = proxy.decode('utf8')
     proxies = {"http": "http://{proxy}".format(proxy=proxy)}
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'}
     try:
         # 超过20秒的代理就不要了
-        r = requests.get('http://httpbin.org/ip', proxies=proxies, timeout=10, verify=False)
+        r = requests.get('http://wenshu.court.gov.cn/', proxies=proxies, timeout=10, headers=headers,
+                         verify=False)  # http://httpbin.org/ip
         if r.status_code == 200:
             # logger.info('%s is ok' % proxy)
             return True

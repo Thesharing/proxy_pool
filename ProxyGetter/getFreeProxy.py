@@ -14,6 +14,7 @@
 import re
 import sys
 import requests
+import json
 
 try:
     from importlib import reload  # py3 实际不会实用，只是为了不显示语法错误
@@ -41,6 +42,9 @@ requests.packages.urllib3.disable_warnings()
     proxy-list.org
     www.mimiip.com to do
 """
+
+with open('../key.txt', 'r', encoding='utf-8') as f:
+    key = f.read().strip()
 
 
 class GetFreeProxy(object):
@@ -308,11 +312,31 @@ class GetFreeProxy(object):
             for proxy in proxies:
                 yield ':'.join(proxy)
 
+    @staticmethod
+    def customProxy():
+        url = 'https://www.kuaidaili.com/api/getproxy'
+        params = {'orderid': key,
+                  'num': 20,
+                  'quality': 1,
+                  'area': '中国',
+                  'method': 2,
+                  'an_ha': 1,
+                  'format': 'json'}
+        request = WebRequest()
+        try:
+            r = request.get(url, params=params)
+            res = json.loads(r)
+            if 'data' in res and 'proxy_list' in res['data'] and len(res['data']['proxy_list']) > 0:
+                for i in res['data']:
+                    yield i
+        except (json.JSONDecodeError, requests.exceptions.Timeout):
+            pass
+
 
 if __name__ == '__main__':
     from CheckProxy import CheckProxy
 
-    CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyFifth)
-    CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxySecond)
+    CheckProxy.checkGetProxyFunc(GetFreeProxy.customProxy)
+    # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxySecond)
 
-    CheckProxy.checkAllGetProxyFunc()
+    # CheckProxy.checkAllGetProxyFunc()
