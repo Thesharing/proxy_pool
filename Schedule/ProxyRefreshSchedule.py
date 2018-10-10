@@ -96,7 +96,7 @@ def main(process_num=30):
 def run():
     main()
     sch = BlockingScheduler()
-    sch.add_job(main, 'interval', minutes=10)  # 每10分钟抓取一次
+    sch.add_job(main, 'interval', minutes=5)  # 每10分钟抓取一次
     sch.start()
 
 
