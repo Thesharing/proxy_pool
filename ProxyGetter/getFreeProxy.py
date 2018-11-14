@@ -86,7 +86,8 @@ class GetFreeProxy(object):
     @staticmethod
     def freeProxyThird(days=1):
         """
-        ip181 http://www.ip181.com/  不能用了
+        ip181 http://www.ip181.com/
+        网站403
         :param days:
         :return:
         """
@@ -149,6 +150,7 @@ class GetFreeProxy(object):
     def freeProxySixth():
         """
         讯代理 http://www.xdaili.cn/
+        网站不再提供免费代理
         :return:
         """
         url = 'http://www.xdaili.cn/ipagent/freeip/getFreeIps?page=1&rows=10'
@@ -181,6 +183,7 @@ class GetFreeProxy(object):
     def freeProxyEight():
         """
         秘密代理 http://www.mimiip.com
+        网站无法正常访问
         """
         url_gngao = ['http://www.mimiip.com/gngao/%s' % n for n in range(1, 2)]  # 国内高匿
         url_gnpu = ['http://www.mimiip.com/gnpu/%s' % n for n in range(1, 2)]  # 国内普匿
@@ -198,6 +201,7 @@ class GetFreeProxy(object):
     def freeProxyNinth():
         """
         码农代理 https://proxy.coderbusy.com/
+        网站无法正常访问
         :return:
         """
         urls = ['https://proxy.coderbusy.com/classical/country/cn.aspx?page=1']
@@ -258,6 +262,42 @@ class GetFreeProxy(object):
                 continue
             for tr in tr_list:
                 yield tr.xpath("./td[2]/text()")[0] + ":" + tr.xpath("./td[3]/text()")[0]
+
+    @staticmethod
+    def freeProxyCustumOne():
+        """
+        三一代理 http://31f.cn/
+        :return:
+        """
+        url = 'http://31f.cn/'
+        request = WebRequest()
+        r = request.get(url, timeout=10)
+        proxies = re.findall(r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\s\S]*?<td>(\d+)</td>', r.text)
+        for proxy in proxies:
+            yield ":".join(proxy)
+
+    @staticmethod
+    def freeProxyCustumTwo(page_count=2):
+        """
+        免费代理IP库 http://www.89ip.cn/
+        :return:
+        """
+        for i in range(1, page_count + 1):
+            url = 'http://www.89ip.cn/index_{}.html'.format(i)
+            request = WebRequest()
+            r = request.get(url, timeout=10)
+            proxies = re.findall(r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td><td>(\d+)</td>', re.sub(r'[\t\n]', '', r.text))
+            for proxy in proxies:
+                yield ":".join(proxy)
+
+    @staticmethod
+    def freeProxyCustumThree():
+        url = 'http://lab.crossincode.com/proxy/'
+        request = WebRequest()
+        r = request.get(url, timeout=10)
+        proxies = re.findall(r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\s\S]*?<td>(\d+)</td>', r.text)
+        for proxy in proxies:
+            yield ":".join(proxy)
 
     @staticmethod
     def freeProxyWallFirst():
