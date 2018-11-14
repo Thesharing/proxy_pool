@@ -31,17 +31,17 @@ class SsdbClient(object):
         验证后的代理存放在name为useful_proxy的hash中，key为代理的ip:port，value为一个计数,初始为1，每校验失败一次减1；
 
     """
-
-    def __init__(self, name, host, port):
+    def __init__(self, name, **kwargs):
         """
         init
         :param name: hash name
-        :param host: ssdb host
-        :param port: ssdb port
+        :param host: host
+        :param port: port
+        :param password: password
         :return:
         """
         self.name = name
-        self.__conn = Redis(connection_pool=BlockingConnectionPool(host=host, port=port))
+        self.__conn = Redis(connection_pool=BlockingConnectionPool(**kwargs))
 
     def get(self, proxy):
         """
@@ -111,6 +111,7 @@ class SsdbClient(object):
     def changeTable(self, name):
         self.name = name
 
+
 if __name__ == '__main__':
-    c = SsdbClient('useful_proxy', '118.24.52.95', 8899)
+    c = SsdbClient(name='useful_proxy', host='127.0.0.1', port=8899, password=None)
     print(c.getAll())

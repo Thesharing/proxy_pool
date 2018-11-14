@@ -17,7 +17,7 @@ import random
 
 from Util import EnvUtil
 from DB.DbClient import DbClient
-from Util.GetConfig import GetConfig
+from Util.GetConfig import config
 from Util.LogHandler import LogHandler
 from Util.utilFunction import verifyProxyFormat
 from ProxyGetter.getFreeProxy import GetFreeProxy
@@ -30,23 +30,22 @@ class ProxyManager(object):
 
     def __init__(self):
         self.db = DbClient()
-        self.config = GetConfig()
         self.raw_proxy_queue = 'raw_proxy'
         self.log = LogHandler('proxy_manager')
         self.useful_proxy_queue = 'useful_proxy'
 
     def refresh(self):
         """
-        fetch proxy into Db by ProxyGetter
+        fetch proxy into Db by ProxyGetter/getFreeProxy.py
         :return:
         """
         self.db.changeTable(self.raw_proxy_queue)
-        for proxyGetter in self.config.proxy_getter_functions:
+        for proxyGetter in config.proxy_getter_functions:
             # fetch
             try:
                 self.log.info("{func}: fetch proxy start".format(func=proxyGetter))
                 for proxy in getattr(GetFreeProxy, proxyGetter.strip())():
-                    # 挨个存储 proxy，优化raw 队列的 push 速度，进而加快 check proxy 的速度
+                    # 直接存储代理, 不用在代码中排重, hash 结构本身具有排重功能
                     proxy = proxy.strip()
                     if proxy and verifyProxyFormat(proxy):
                         self.log.info('{func}: fetch proxy {proxy}'.format(func=proxyGetter, proxy=proxy))

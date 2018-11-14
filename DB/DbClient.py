@@ -16,7 +16,7 @@ __author__ = 'JHao'
 import os
 import sys
 
-from Util.GetConfig import GetConfig
+from Util.GetConfig import config
 from Util.utilClass import Singleton
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -44,7 +44,7 @@ class DbClient(object):
 
         所有方法需要相应类去具体实现：
             SSDB：SsdbClient.py
-            REDIS:RedisClient.py
+            REDIS:RedisClient.py  停用 统一使用SsdbClient.py
 
     """
 
@@ -55,7 +55,6 @@ class DbClient(object):
         init
         :return:
         """
-        self.config = GetConfig()
         self.__initDbClient()
 
     def __initDbClient(self):
@@ -64,18 +63,19 @@ class DbClient(object):
         :return:
         """
         __type = None
-        if "SSDB" == self.config.db_type:
+        if "SSDB" == config.db_type:
             __type = "SsdbClient"
-        elif "REDIS" == self.config.db_type:
-            __type = "RedisClient"
-        elif "MONGODB" == self.config.db_type:
+        elif "REDIS" == config.db_type:
+            __type = "SsdbClient"
+        elif "MONGODB" == config.db_type:
             __type = "MongodbClient"
         else:
             pass
-        assert __type, 'type error, Not support DB type: {}'.format(self.config.db_type)
-        self.client = getattr(__import__(__type), __type)(name=self.config.db_name,
-                                                          host=self.config.db_host,
-                                                          port=self.config.db_port)
+        assert __type, 'type error, Not support DB type: {}'.format(config.db_type)
+        self.client = getattr(__import__(__type), __type)(name=config.db_name,
+                                                          host=config.db_host,
+                                                          port=config.db_port,
+                                                          password=config.db_password)
 
     def get(self, key, **kwargs):
         return self.client.get(key, **kwargs)
@@ -107,7 +107,5 @@ class DbClient(object):
 
 if __name__ == "__main__":
     account = DbClient()
-    print(account.get())
-    account.changeTable('use')
-    account.put('ac')
-    print(account.get())
+    account.changeTable('useful_proxy')
+    print(account.pop())
