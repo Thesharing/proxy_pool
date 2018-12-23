@@ -102,7 +102,7 @@ def validUsefulProxy(proxy):
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'}
     try:
         # 超过20秒的代理就不要了
-        r = requests.get('http://wenshu.court.gov.cn/', proxies=proxies, timeout=10, headers=headers,
+        r = requests.get('http://wenshu.court`.gov.cn/', proxies=proxies, timeout=10, headers=headers,
                          verify=False)  # http://httpbin.org/ip
         if r.status_code == 200:
             # logger.info('%s is ok' % proxy)
